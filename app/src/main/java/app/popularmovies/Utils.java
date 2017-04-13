@@ -6,8 +6,10 @@ package app.popularmovies;
 
 public class Utils {
 
-    public static final String TMDB_BASE_URL = "http://api.themoviedb.org/";
-    public static final String END_POINT_POPULAR = "3/movie/popular";
-    public static final String END_POINT_TOP_RATED = "3/movie/top_rated";
+    public static final String TMDB_BASE_URL = "http://api.themoviedb.org/3/movie/";
     public static final String TMDB_IMAGE_URL = "http://image.tmdb.org/t/p/w185/";
+    public static final String TMDB_API_KEY = "";
+
+    public static final String END_POINT_POPULAR = "popular";
+    public static final String END_POINT_TOP_RATED = "top_rated";
 }

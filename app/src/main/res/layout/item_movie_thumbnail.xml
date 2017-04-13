@@ -1,21 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
-<ImageView android:layout_width="wrap_content"
+<FrameLayout android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/iv_thumb"
-    android:scaleType="centerCrop"/>
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <TextView
-        android:id="@+id/tv_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:maxLines="1"
-        android:ellipsize="marquee"
-        tools:text="@string/lotr_movie"
-        android:textSize="14sp"
+
+    <ImageView
+    android:layout_width="match_parent"
+android:layout_height="wrap_content"
+        android:id="@+id/iv_thumb"
+        tools:src="@drawable/placeholder"
+        android:background="@color/colorAccent"
+    android:scaleType="fitCenter"
+    android:adjustViewBounds="true"
         />
 
 

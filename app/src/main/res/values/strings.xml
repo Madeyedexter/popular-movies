@@ -1,7 +1,18 @@
 <resources>
     <string name="app_name">Popular Movies</string>
     <string name="sort_order">Sort By</string>
-    <string name="so_most_popular">Most Popular</string>
-    <string name="so_top_rated">Top Rated</string>
     <string name="lotr_movie">Lord of the Rings: The Return of the King</string>
+    <string name="title_movie_details">Movie Details</string>
+    <string name="synopsis">Synopsis</string>
+    <string name="error_loading">There was an error Loading the content.\nPlease try again.</string>
+    <string name="date_format_tmdb">yyyy-MM-dd</string>
+    <string name="date_format_view">MMMM dd, yyyy</string>
+    <string name="release_date">Release Date: %1$s</string>
+    <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</string>
+    <string name="retrieveing_popular">Retrieving Most Popular Movies.</string>
+    <string name="retrieving_top">Retrieving Top Rated Movies.</string>
+    <string-array name="movie_sort_order">
+        <item>Most Popular</item>
+        <item>Top Rated</item>
+    </string-array>
 </resources>

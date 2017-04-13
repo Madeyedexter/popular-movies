@@ -3,17 +3,35 @@ package app.popularmovies.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by n188851 on 12-04-2017.
  */
 
 public class Movie implements Parcelable{
+
+
+    public Movie(){
+
+    }
+
+    public Movie(String posterPath, String originalTitle, String overview, float averageVote, float popularity, String releaseDate) {
+        this.posterPath = posterPath;
+        this.originalTitle = originalTitle;
+        this.overview = overview;
+        this.averageVote = averageVote;
+        this.popularity = popularity;
+        this.releaseDate = releaseDate;
+    }
+
     protected Movie(Parcel in) {
-        poster_path = in.readString();
-        original_title = in.readString();
+        posterPath = in.readString();
+        originalTitle = in.readString();
         overview = in.readString();
-        vote_average = in.readFloat();
+        averageVote = in.readFloat();
         popularity = in.readFloat();
+        releaseDate=in.readString();
     }
 
     public static final Creator<Movie> CREATOR = new Creator<Movie>() {
@@ -28,43 +46,36 @@ public class Movie implements Parcelable{
         }
     };
 
-    public String getPoster_path() {
-        return poster_path;
-    }
-
-    public Movie(){
-
-    }
-
-    public Movie(String poster_path, String original_title, String overview, float vote_average, float popularity) {
-        this.poster_path = poster_path;
-        this.original_title = original_title;
-        this.overview = overview;
-        this.vote_average = vote_average;
-        this.popularity = popularity;
-    }
-
     @Override
+
     public String toString() {
         return "Movie{" +
-                "poster_path='" + poster_path + '\'' +
-                ", original_title='" + original_title + '\'' +
+                "posterPath='" + posterPath + '\'' +
+                ", originalTitle='" + originalTitle + '\'' +
                 ", overview='" + overview + '\'' +
-                ", vote_average=" + vote_average +
+                ", averageVote=" + averageVote +
                 ", popularity=" + popularity +
+                ", releaseDate=" + releaseDate +
                 '}';
     }
 
-    public void setPoster_path(String poster_path) {
-        this.poster_path = poster_path;
+    @SerializedName("poster_path")
+    private String posterPath;
+
+    public String getPosterPath() {
+        return posterPath;
     }
 
-    public String getOriginal_title() {
-        return original_title;
+    public void setPosterPath(String posterPath) {
+        this.posterPath = posterPath;
     }
 
-    public void setOriginal_title(String original_title) {
-        this.original_title = original_title;
+    public String getOriginalTitle() {
+        return originalTitle;
+    }
+
+    public void setOriginalTitle(String originalTitle) {
+        this.originalTitle = originalTitle;
     }
 
     public String getOverview() {
@@ -75,12 +86,12 @@ public class Movie implements Parcelable{
         this.overview = overview;
     }
 
-    public float getVote_average() {
-        return vote_average;
+    public float getAverageVote() {
+        return averageVote;
     }
 
-    public void setVote_average(float vote_average) {
-        this.vote_average = vote_average;
+    public void setAverageVote(float averageVote) {
+        this.averageVote = averageVote;
     }
 
     public float getPopularity() {
@@ -91,11 +102,25 @@ public class Movie implements Parcelable{
         this.popularity = popularity;
     }
 
-    private String poster_path;
-    private String original_title;
+    @SerializedName("original_title")
+    private String originalTitle;
+
     private String overview;
-    private float vote_average;
+    @SerializedName("vote_average")
+    private float averageVote;
     private float popularity;
+
+    public String getReleaseDate() {
+        return releaseDate;
+    }
+
+    public void setReleaseDate(String releaseDate) {
+        this.releaseDate = releaseDate;
+    }
+
+    @SerializedName("release_date")
+    private String releaseDate;
+
 
     @Override
     public int describeContents() {
@@ -104,10 +129,11 @@ public class Movie implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(poster_path);
-        dest.writeString(original_title);
+        dest.writeString(posterPath);
+        dest.writeString(originalTitle);
         dest.writeString(overview);
-        dest.writeFloat(vote_average);
+        dest.writeFloat(averageVote);
         dest.writeFloat(popularity);
+        dest.writeString(releaseDate);
     }
 }
