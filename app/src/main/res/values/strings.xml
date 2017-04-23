@@ -4,15 +4,39 @@
     <string name="lotr_movie">Lord of the Rings: The Return of the King</string>
     <string name="title_movie_details">Movie Details</string>
     <string name="synopsis">Synopsis</string>
-    <string name="error_loading">There was an error Loading the content.\nPlease try again.</string>
+    <string name="error_loading">There was an error loading the content.\nPlease try again.</string>
     <string name="date_format_tmdb">yyyy-MM-dd</string>
     <string name="date_format_view">MMMM dd, yyyy</string>
     <string name="release_date">Release Date: %1$s</string>
     <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</string>
-    <string name="retrieveing_popular">Retrieving Most Popular Movies.</string>
+    <string name="retrieving_popular">Retrieving Most Popular Movies.</string>
     <string name="retrieving_top">Retrieving Top Rated Movies.</string>
+    <string name="favorite_movie"> Favorite Movie</string>
+    <string name="set_as_favorite"> Set as Favorite</string>
+    <string name="label_videos">See Videos ></string>
+    <string name="see_reviews">See Reviews ></string>
+    <string name="title_videos_activity">Videos</string>
+    <string name="title_review_activity">Reviews</string>
+    <string name="by_placeholder">by Danish Kamal</string>
+    <string name="message_no_videos">No videos for this Movie yet.</string>
+    <string name="message_no_reviews">No reviews for this Movie yet.</string>
+    <string name="retrieving_favorite">Loading favorite movies</string>
+    <string name="no_favorite_movie">You do not have any favorite movies.</string>
+    <string name="key_is_favorite">is_favorite</string>
+    <string name="key_movie_id">movie_id</string>
+    <string name="key_videos_list">videos_list</string>
+    <string name="key_reviews_list">reviews_list</string>
+    <string name="key_movie">movie</string>
+    <string name="message_adding_to_favorite">Adding movie to your favorites list.</string>
+    <string name="message_error_favoriting">There was an error adding %1$s to favorites.</string>
+    <string name="message_added_favorite">%1$s added to favorite list.</string>
+    <string name="message_removing_favorite">Removing movie from favorites.</string>
+    <string name="message_removed_favorite">Movie removed from favorites.</string>
+    <string name="share_trailer">Share Trailer</string>
+    <string name="message_nothing_to_share">Nothing to share!</string>
     <string-array name="movie_sort_order">
         <item>Most Popular</item>
         <item>Top Rated</item>
+        <item>Favorites</item>
     </string-array>
 </resources>

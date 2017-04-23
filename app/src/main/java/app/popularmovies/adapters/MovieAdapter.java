@@ -1,19 +1,20 @@
-package app.popularmovies;
+package app.popularmovies.adapters;
 
-import android.nfc.Tag;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import app.popularmovies.R;
+import app.popularmovies.Utils;
 import app.popularmovies.model.Movie;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by n188851 on 12-04-2017.
@@ -24,7 +25,7 @@ public class MovieAdapter extends RecyclerView.Adapter {
 
     private List<Movie> movies;
 
-    interface ThumbClickListener{
+    public interface ThumbClickListener{
         void onThumbClicked(Movie movie);
     }
 
@@ -56,20 +57,19 @@ public class MovieAdapter extends RecyclerView.Adapter {
 
     public class MovieThumbHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
-        //TextView tv_title;
+        @BindView(R.id.iv_thumb)
         ImageView iv_thumb;
 
         public MovieThumbHolder(View rootView){
             super(rootView);
-            //tv_title = (TextView) rootView.findViewById(R.id.tv_title);
-            iv_thumb = (ImageView) rootView.findViewById(R.id.iv_thumb);
+            ButterKnife.bind(this,rootView);
             rootView.setOnClickListener(MovieThumbHolder.this);
         }
 
         public void bindData(int position){
             Movie movie = movies.get(position);
             String url = Utils.TMDB_IMAGE_URL + movie.getPosterPath();
-            Picasso.with(iv_thumb.getContext()).load(url).into(iv_thumb);
+            Picasso.with(iv_thumb.getContext()).load(url).placeholder(R.drawable.placeholder_poster_load).error(R.drawable.placeholder_video_load_error).into(iv_thumb);
 
         }
 

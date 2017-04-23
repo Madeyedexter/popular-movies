@@ -1,9 +1,6 @@
 package app.popularmovies.retrofit_services;
 
-import java.util.List;
-
 import app.popularmovies.Utils;
-import app.popularmovies.model.Movie;
 import app.popularmovies.model.MovieList;
 import app.popularmovies.model.ReviewsList;
 import app.popularmovies.model.VideosList;
@@ -16,13 +13,7 @@ import retrofit2.http.Query;
  * Created by n188851 on 12-04-2017.
  */
 
-public interface MovieAPI {
-    @GET("{endpoint}")
-    Call<MovieList> listMovies(@Path("endpoint") String emdPoint, @Query("api_key") String key);
-
-    @GET(Utils.END_POINT_VIDEOS)
-    Call<VideosList> listMovieVideos(@Path("movie_id") String movieId, @Query("api_key") String key);
-
+public interface ReviewAPI {
     @GET(Utils.END_POINT_REVIEWS)
     Call<ReviewsList> listMovieReviews(@Path("movie_id") String movieId, @Query("api_key") String key);
 

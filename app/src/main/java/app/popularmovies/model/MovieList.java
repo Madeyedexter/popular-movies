@@ -13,7 +13,25 @@ import java.util.List;
 
 public class MovieList implements Parcelable {
 
+    public static final Creator<MovieList> CREATOR = new Creator<MovieList>() {
+        @Override
+        public MovieList createFromParcel(Parcel in) {
+            return new MovieList(in);
+        }
+
+        @Override
+        public MovieList[] newArray(int size) {
+            return new MovieList[size];
+        }
+    };
     int page;
+    @SerializedName("results")
+    private List<Movie> movieList;
+
+    protected MovieList(Parcel in) {
+        page = in.readInt();
+        movieList = in.createTypedArrayList(Movie.CREATOR);
+    }
 
     public int getPage() {
         return page;
@@ -30,26 +48,6 @@ public class MovieList implements Parcelable {
     public void setMovieList(List<Movie> movieList) {
         this.movieList = movieList;
     }
-
-    @SerializedName("results")
-    private List<Movie> movieList;
-
-    protected MovieList(Parcel in) {
-        page = in.readInt();
-        movieList = in.createTypedArrayList(Movie.CREATOR);
-    }
-
-    public static final Creator<MovieList> CREATOR = new Creator<MovieList>() {
-        @Override
-        public MovieList createFromParcel(Parcel in) {
-            return new MovieList(in);
-        }
-
-        @Override
-        public MovieList[] newArray(int size) {
-            return new MovieList[size];
-        }
-    };
 
     @Override
     public int describeContents() {
