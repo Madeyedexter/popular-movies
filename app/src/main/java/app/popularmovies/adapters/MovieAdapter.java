@@ -8,6 +8,7 @@ import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import app.popularmovies.R;
@@ -23,13 +24,17 @@ import butterknife.ButterKnife;
 public class MovieAdapter extends RecyclerView.Adapter {
     private static final String TAG = MovieAdapter.class.getSimpleName();
 
-    private List<Movie> movies;
+    public ArrayList<Movie> getMovies() {
+        return movies;
+    }
+
+    private ArrayList<Movie> movies;
 
     public interface ThumbClickListener{
         void onThumbClicked(Movie movie);
     }
 
-    public void setMovies(List<Movie> movies) {
+    public void setMovies(ArrayList<Movie> movies) {
         this.movies = movies;
         notifyDataSetChanged();
     }

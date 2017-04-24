@@ -25,8 +25,7 @@
             android:parentActivityName=".MainActivity"
             android:launchMode="singleTop"
             />
-        <activity android:name=".VideoActivity" android:parentActivityName=".DetailActivity"/>
-        <activity android:name=".ReviewActivity" android:parentActivityName=".DetailActivity"></activity>
+
         <provider
             android:authorities="app.popularmovies"
             android:name=".data.MovieContentProvider"

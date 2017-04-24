@@ -3,6 +3,8 @@ package app.popularmovies;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -11,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -53,12 +56,18 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Thum
 
     //The spinner which shows movie sort criteria
     private Spinner spinner;
+
+    //state variables
     private int currentMovieListPosition;
+    private ArrayList<Movie> movieList;
+    private Parcelable layoutManagerState;
+
     private AdapterView.OnItemSelectedListener onItemSelectedListener = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             //keep track of the current movie list
             currentMovieListPosition = position;
+            Log.d(TAG,"Movie List is: "+ movieList);
             switch (position) {
                 case 0:
                     fetchMovies(Utils.END_POINT_POPULAR);
@@ -86,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Thum
         setContentView(R.layout.activity_main);
 
         ButterKnife.bind(this);
-        GridLayoutManager layoutManager = new GridLayoutManager(this, 2, LinearLayoutManager.VERTICAL, false);
+        GridLayoutManager layoutManager = new GridLayoutManager(this, Utils.calculateNoOfColumns(this), LinearLayoutManager.VERTICAL, false);
         movieRecyclerView.setLayoutManager(layoutManager);
 
         movieAdapter = new MovieAdapter(this);
@@ -95,8 +104,11 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Thum
         //Device configuration changed and activity was recreated, so we need to get the previous
         //selected state of the spinner
         if (savedInstanceState != null) {
-            this.currentMovieListPosition = savedInstanceState.getInt("current_movie_list_position", 0);
+            this.currentMovieListPosition = savedInstanceState.getInt(getString(R.string.key_current_movie_list_position), 0);
+            movieList = savedInstanceState.getParcelableArrayList(getString(R.string.key_movie_list));
+            layoutManagerState = savedInstanceState.getParcelable(getString(R.string.key_rv_lom_state));
         }
+        Log.d(TAG,"Exiting onCreate");
     }
 
 
@@ -138,31 +150,44 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Thum
 
     private void fetchMovies(String endPoint) {
         showLoading();
-
-        Retrofit retrofit = new Retrofit.Builder().
-                baseUrl(Utils.TMDB_BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        MovieAPI movieAPI = retrofit.create(MovieAPI.class);
-        Call<MovieList> movies = movieAPI.listMovies(endPoint, Utils.TMDB_API_KEY);
-        movies.enqueue(new Callback<MovieList>() {
-            @Override
-            public void onResponse(Call<MovieList> call, Response<MovieList> response) {
-                showData();
-                movieAdapter.setMovies(response.body().getMovieList());
-            }
-
-            @Override
-            public void onFailure(Call<MovieList> call, Throwable t) {
-                showError();
-            }
-        });
-
+        //if configuration change ocurred or app was sent to background, we will try to
+        //retrieve movie data that was restored from savedInstanceState, else we will do a network request
+        Log.d(TAG,"Inside fetchMovies");
+        if(movieList!=null){
+            showData();
+            movieAdapter.setMovies(movieList);
+            movieRecyclerView.getLayoutManager().onRestoreInstanceState(layoutManagerState);
+        }
+        else /*do a network fetch*/{
+            Retrofit retrofit = new Retrofit.Builder().
+                    baseUrl(Utils.TMDB_BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+            MovieAPI movieAPI = retrofit.create(MovieAPI.class);
+            Call<MovieList> movies = movieAPI.listMovies(endPoint, Utils.TMDB_API_KEY);
+            movies.enqueue(new Callback<MovieList>() {
+                @Override
+                public void onResponse(Call<MovieList> call, Response<MovieList> response) {
+                    showData();
+                    movieAdapter.setMovies(response.body().getMovieList());
+                    if(layoutManagerState!=null)
+                        movieRecyclerView.getLayoutManager().onRestoreInstanceState(layoutManagerState);
+                }
+                @Override
+                public void onFailure(Call<MovieList> call, Throwable t) {
+                    showError();
+                }
+            });
+        }
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putInt("current_movie_list_position", currentMovieListPosition);
+        outState.putInt(getString(R.string.key_current_movie_list_position), currentMovieListPosition);
+        //save current data of movie adapter
+        outState.putParcelableArrayList(getString(R.string.key_movie_list),movieAdapter.getMovies());
+        //save recycler view layout manager state
+        outState.putParcelable(getString(R.string.key_rv_lom_state),movieRecyclerView.getLayoutManager().onSaveInstanceState());
         super.onSaveInstanceState(outState);
     }
 

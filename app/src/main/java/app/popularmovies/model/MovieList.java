@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,7 +27,7 @@ public class MovieList implements Parcelable {
     };
     int page;
     @SerializedName("results")
-    private List<Movie> movieList;
+    private ArrayList<Movie> movieList;
 
     protected MovieList(Parcel in) {
         page = in.readInt();
@@ -41,11 +42,11 @@ public class MovieList implements Parcelable {
         this.page = page;
     }
 
-    public List<Movie> getMovieList() {
+    public ArrayList<Movie> getMovieList() {
         return movieList;
     }
 
-    public void setMovieList(List<Movie> movieList) {
+    public void setMovieList(ArrayList<Movie> movieList) {
         this.movieList = movieList;
     }
 

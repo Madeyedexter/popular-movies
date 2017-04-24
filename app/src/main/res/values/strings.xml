@@ -13,8 +13,8 @@
     <string name="retrieving_top">Retrieving Top Rated Movies.</string>
     <string name="favorite_movie"> Favorite Movie</string>
     <string name="set_as_favorite"> Set as Favorite</string>
-    <string name="label_videos">See Videos ></string>
-    <string name="see_reviews">See Reviews ></string>
+    <string name="label_videos">Videos</string>
+    <string name="see_reviews">Reviews</string>
     <string name="title_videos_activity">Videos</string>
     <string name="title_review_activity">Reviews</string>
     <string name="by_placeholder">by Danish Kamal</string>
@@ -34,6 +34,9 @@
     <string name="message_removed_favorite">Movie removed from favorites.</string>
     <string name="share_trailer">Share Trailer</string>
     <string name="message_nothing_to_share">Nothing to share!</string>
+    <string name="key_current_movie_list_position">current_movie_list_position</string>
+    <string name="key_movie_list">list_movies</string>
+    <string name="key_rv_lom_state">rv_lom_state</string>
     <string-array name="movie_sort_order">
         <item>Most Popular</item>
         <item>Top Rated</item>
