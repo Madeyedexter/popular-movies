@@ -37,6 +37,8 @@
     <string name="key_current_movie_list_position">current_movie_list_position</string>
     <string name="key_movie_list">list_movies</string>
     <string name="key_rv_lom_state">rv_lom_state</string>
+    <string name="key_current_page">current_page</string>
+    <string name="message_end">This is the end, my friend.</string>
     <string-array name="movie_sort_order">
         <item>Most Popular</item>
         <item>Top Rated</item>

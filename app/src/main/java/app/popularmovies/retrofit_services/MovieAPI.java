@@ -18,13 +18,8 @@ import retrofit2.http.Query;
 
 public interface MovieAPI {
     @GET("{endpoint}")
-    Call<MovieList> listMovies(@Path("endpoint") String emdPoint, @Query("api_key") String key);
+    Call<MovieList> listMovies(@Path("endpoint") String emdPoint, @Query("api_key") String key, @Query("page") String page);
 
-    @GET(Utils.END_POINT_VIDEOS)
-    Call<VideosList> listMovieVideos(@Path("movie_id") String movieId, @Query("api_key") String key);
-
-    @GET(Utils.END_POINT_REVIEWS)
-    Call<ReviewsList> listMovieReviews(@Path("movie_id") String movieId, @Query("api_key") String key);
 
 
 }
