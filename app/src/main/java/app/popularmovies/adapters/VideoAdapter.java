@@ -15,6 +15,8 @@ import java.util.List;
 
 import app.popularmovies.R;
 import app.popularmovies.Utils;
+import app.popularmovies.holders.LoadingHolder;
+import app.popularmovies.holders.TextHolder;
 import app.popularmovies.model.Video;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -26,7 +28,8 @@ import butterknife.ButterKnife;
 public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final String TAG = VideoAdapter.class.getSimpleName();
-    public interface VideoClickListener{
+
+    public interface VideoClickListener {
         void onVideoClicked(String urlKey);
     }
 
@@ -51,18 +54,75 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private ArrayList<Video> videos;
 
+    private static final int ITEM_TYPE_LOADING = 0;
+    private static final int ITEM_TYPE_DATA = 1;
+    private static final int ITEM_TYPE_EMPTY = 2;
+    private static final int ITEM_TYPE_DONE = 3;
+
+    public void setLoading(boolean loading) {
+        this.loading = loading;
+        notifyItemChanged(getItemCount() - 1);
+    }
+
+    public void setDone(boolean done) {
+        this.done = done;
+        notifyItemChanged(getItemCount() - 1);
+    }
+
+    private boolean loading = false;
+    private boolean done = false;
+
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new VideoHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_video,parent,false));
+        switch (viewType) {
+            case ITEM_TYPE_DATA:
+                return new VideoAdapter.VideoHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_video, parent, false));
+            case ITEM_TYPE_LOADING:
+                return new LoadingHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_loading_video_review, parent, false));
+            default:
+                return new TextHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_text_message, parent, false));
+        }
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        VideoHolder videoHolder = (VideoHolder) holder;
-        videoHolder.bindToView(videos.get(position));
+        switch (getItemViewType(position)) {
+            case ITEM_TYPE_DATA:
+                ((VideoAdapter.VideoHolder) holder).bindToView(videos.get(position));
+                break;
+            case ITEM_TYPE_LOADING:
+                break;
+            case ITEM_TYPE_EMPTY:
+                ((TextHolder) holder).setMessage("No Videos for this movie yet.");
+                break;
+            case ITEM_TYPE_DONE:
+                ((TextHolder) holder).collapse();
+                break;
+        }
     }
 
-    public class VideoHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    @Override
+    public int getItemCount() {
+        return videos == null ? 1 : videos.size() + 1;
+    }
+
+    public void clearStatus() {
+        loading = done = false;
+        notifyItemChanged(getItemCount() - 1);
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if(position==getItemCount()-1 && loading)
+            return ITEM_TYPE_LOADING;
+        if(position==getItemCount()-1 && getItemCount()==1)
+            return ITEM_TYPE_EMPTY;
+        if(position == getItemCount()-1)
+            return ITEM_TYPE_DONE;
+        return ITEM_TYPE_DATA;
+    }
+
+    public class VideoHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         @BindView(R.id.iv_video_thumb)
         ImageView videoThumb;
@@ -74,13 +134,13 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         public VideoHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this,itemView);
-            this.rootView=itemView;
+            ButterKnife.bind(this, itemView);
+            this.rootView = itemView;
         }
 
-        public void bindToView(Video video){
-            Log.d(TAG,"Video is: "+video);
-            Picasso.with(videoThumb.getContext()).load(Utils.VIDEO_THUMB_BASE_URL+video.getUrlKey()+"/0.jpg").placeholder(R.drawable.play_circle_placeholder).error(R.drawable.placeholder_video_load_error).into(videoThumb);
+        public void bindToView(Video video) {
+            Log.d(TAG, "Video is: " + video);
+            Picasso.with(videoThumb.getContext()).load(Utils.VIDEO_THUMB_BASE_URL + video.getUrlKey() + "/0.jpg").placeholder(R.drawable.play_circle_placeholder).error(R.drawable.placeholder_video_load_error).into(videoThumb);
             videoName.setText(video.getName());
             rootView.setTag(video.getUrlKey());
             rootView.setOnClickListener(this);
@@ -90,10 +150,5 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         public void onClick(View v) {
             videoClickListener.onVideoClicked(v.getTag().toString());
         }
-    }
-
-    @Override
-    public int getItemCount() {
-        return videos==null?0:videos.size();
     }
 }

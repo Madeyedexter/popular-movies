@@ -71,11 +71,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Thum
             Log.d(TAG, "CP is: "+recyclerViewScrollListener.getCurrentPage());
             switch (position) {
                 case 0:
-                    recyclerViewScrollListener.enable();
                     fetchMovies(Utils.END_POINT_POPULAR);
                     break;
                 case 1:
-                    recyclerViewScrollListener.enable();
                     fetchMovies(Utils.END_POINT_TOP_RATED);
                     break;
                 case 2:
@@ -106,10 +104,19 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Thum
         setContentView(R.layout.activity_main);
 
         ButterKnife.bind(this);
-        GridLayoutManager layoutManager = new GridLayoutManager(this, Utils.calculateNoOfColumns(this), LinearLayoutManager.VERTICAL, false);
+        final int noOfColumns = Utils.calculateNoOfColumns(this);
+        GridLayoutManager layoutManager = new GridLayoutManager(this,noOfColumns, LinearLayoutManager.VERTICAL, false);
         movieRecyclerView.setLayoutManager(layoutManager);
-
         movieAdapter = new MovieAdapter(this);
+        layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                switch (movieAdapter.getItemViewType(position)){
+                    case MovieAdapter.ITEM_TYPE_MOVIE: return 1;
+                    default: return noOfColumns;
+                }
+            }
+        });
 
         recyclerViewScrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
             @Override
@@ -131,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Thum
             recyclerViewScrollListener.setCurrentPage(currentPage);
         }
 
-        //movieRecyclerView.addOnScrollListener(recyclerViewScrollListener);
+        movieRecyclerView.addOnScrollListener(recyclerViewScrollListener);
     }
 
     private void loadMovieData(int page, int currentMovieListType) {
@@ -161,37 +168,20 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Thum
             getSupportLoaderManager().restartLoader(LOADER_FAVORITE_ID, null, this).forceLoad();
     }
 
-    private void showLoading() {
-        progressBar.setVisibility(View.VISIBLE);
-        movieRecyclerView.setVisibility(View.INVISIBLE);
-        errorText.setVisibility(View.INVISIBLE);
-        emptyText.setVisibility(View.INVISIBLE);
-    }
-
-    private void showData() {
-        progressBar.setVisibility(View.INVISIBLE);
-        movieRecyclerView.setVisibility(View.VISIBLE);
-        errorText.setVisibility(View.INVISIBLE);
-        emptyText.setVisibility(View.INVISIBLE);
-    }
-
-    private void showError() {
-        movieRecyclerView.setVisibility(View.INVISIBLE);
-        progressBar.setVisibility(View.INVISIBLE);
-        errorText.setVisibility(View.VISIBLE);
-        emptyText.setVisibility(View.INVISIBLE);
-    }
 
     private void fetchMovies(String endPoint) {
         //showLoading();
+        movieAdapter.clear();
         movieAdapter.setLoading(true);
+
         //if configuration change occurred or app was sent to background, we will try to
         //retrieve movie data that was restored from savedInstanceState, else we will do a network request
         if(movieList!=null){
             //showData();
-            movieAdapter.getMovies().addAll(movieList);
+            movieAdapter.setMovies(movieList);
             movieAdapter.setLoading(false);
             movieRecyclerView.getLayoutManager().onRestoreInstanceState(layoutManagerState);
+            recyclerViewScrollListener.enable();
             layoutManagerState=null;
             movieList=null;
         }
@@ -208,9 +198,14 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Thum
             movies.enqueue(new Callback<MovieList>() {
                 @Override
                 public void onResponse(Call<MovieList> call, Response<MovieList> response) {
-                    //showData();
+                    //TODO: we will only add the movies if the current movieList type is the same as the one when we
+                    //made the request. It might be possible that the user navigated to a different movie type
+                    //while the network request was in progress. This will cause the data to be mixed up between
+                    //different movie types.
                     movieAdapter.setMovies(response.body().getMovieList());
                     movieAdapter.setLoading(false);
+                    movieAdapter.notifyDataSetChanged();
+                    recyclerViewScrollListener.enable();
                 }
                 @Override
                 public void onFailure(Call<MovieList> call, Throwable t) {
@@ -219,12 +214,18 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Thum
                 }
             });
         }
+
     }
 
     private void fetchMovies(String endPoint, String page) {
         //if configuration change ocurred or app was sent to background, we will try to
         //retrieve movie data that was restored from savedInstanceState, else we will do a network request
-        movieAdapter.setLoading(true);
+        movieRecyclerView.post(new Runnable() {
+            @Override
+            public void run() {
+                movieAdapter.setLoading(true);
+            }
+        });
         Retrofit retrofit = new Retrofit.Builder().
                     baseUrl(Utils.TMDB_BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
@@ -297,7 +298,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Thum
             @Override
             protected void onStartLoading() {
                 super.onStartLoading();
-                showLoading();
+                movieAdapter.setLoading(true);
             }
 
             @Override
@@ -324,12 +325,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Thum
 
     @Override
     public void onLoadFinished(Loader<ArrayList<Movie>> loader, ArrayList<Movie> data) {
-        if (data.size() == 0) {
-            showEmpty();
-        } else {
-            showData();
-            movieAdapter.setMovies(data);
-        }
+        movieAdapter.clear();
+        movieAdapter.setMovies(data);
     }
 
     @Override

@@ -381,6 +381,8 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
 
 
     private void loadVideosFromNetwork() {
+        final VideoAdapter videoAdapter = ((VideoAdapter)rvVideos.getAdapter());
+        videoAdapter.setLoading(true);
         Retrofit retrofit = new Retrofit.Builder().
                 baseUrl(Utils.TMDB_BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -391,8 +393,9 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
             @Override
             public void onResponse(Call<VideosList> call, Response<VideosList> response) {
                 ArrayList<Video> videoList = response.body().getVideoList();
-                ((VideoAdapter)rvVideos.getAdapter()).setVideos(videoList);
-                if(videoList.size()==0){}
+                videoAdapter.setVideos(videoList);
+                videoAdapter.clearStatus();
+                videoAdapter.setDone(true);
             }
             @Override
             public void onFailure(Call<VideosList> call, Throwable t) {
@@ -402,6 +405,8 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void loadReviewsFromNetwork() {
+        final ReviewAdapter reviewAdapter = (ReviewAdapter) rvReviews.getAdapter();
+        reviewAdapter.setLoading(true);
         Retrofit retrofit = new Retrofit.Builder().
                 baseUrl(Utils.TMDB_BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -411,10 +416,9 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         reviews.enqueue(new Callback<ReviewsList>() {
             @Override
             public void onResponse(Call<ReviewsList> call, Response<ReviewsList> response) {
-                ReviewAdapter reviewAdapter = (ReviewAdapter) rvReviews.getAdapter();
                 reviewAdapter.setReviews(response.body().getReviewList());
-                if(reviewAdapter.getItemCount()==0){
-                }
+                reviewAdapter.clearStatus();
+                reviewAdapter.setDone(true);
             }
             @Override
             public void onFailure(Call<ReviewsList> call, Throwable t) {

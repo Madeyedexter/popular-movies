@@ -2,13 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="16dp">
     <TextView
         android:id="@+id/tv_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:paddingBottom="0dp"
         android:textSize="12sp"
         tools:text="@string/lorem_ipsum"
         />
@@ -16,23 +15,15 @@
         android:id="@+id/tv_author"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="0dp"
-        android:paddingEnd="16dp"
-        android:paddingRight="16dp"
-        android:paddingLeft="16dp"
-        android:paddingStart="16dp"
         android:paddingBottom="8dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
         android:textSize="14sp"
         tools:text="@string/by_placeholder"
+        android:text="@string/review_author_name"
         android:gravity="end|right"
         />
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
         android:background="@android:color/darker_gray"></View>
 </LinearLayout>

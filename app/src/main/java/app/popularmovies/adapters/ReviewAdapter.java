@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import app.popularmovies.R;
+import app.popularmovies.holders.LoadingHolder;
+import app.popularmovies.holders.TextHolder;
 import app.popularmovies.model.Review;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -19,6 +21,24 @@ import butterknife.ButterKnife;
  */
 
 public class ReviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+    private static final int ITEM_TYPE_LOADING = 0;
+    private static final int ITEM_TYPE_DATA = 1;
+    private static final int ITEM_TYPE_EMPTY = 2;
+    private static final int ITEM_TYPE_DONE = 3;
+
+    public void setLoading(boolean loading) {
+        this.loading = loading;
+        notifyItemChanged(getItemCount()-1);
+    }
+
+    public void setDone(boolean done) {
+        this.done = done;
+        notifyItemChanged(getItemCount()-1);
+    }
+
+    private boolean loading = false;
+    private boolean done = false;
 
     public ArrayList<Review> getReviews() {
         return reviews;
@@ -39,22 +59,35 @@ public class ReviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ReviewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_review,parent,false));
+        switch (viewType){
+            case ITEM_TYPE_DATA: return new ReviewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_review,parent,false));
+            case ITEM_TYPE_LOADING: return new LoadingHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_loading_video_review,parent,false));
+            default:return new TextHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_text_message,parent,false));
+        }
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        ((ReviewHolder)holder).bindToView(reviews.get(position));
+        switch (getItemViewType(position)){
+            case ITEM_TYPE_DATA: ((ReviewHolder) holder).bindToView(reviews.get(position));
+                break;
+            case ITEM_TYPE_LOADING:
+                break;
+            case ITEM_TYPE_EMPTY: ((TextHolder) holder).setMessage("No Reviews for this movie yet.");
+                break;
+            case ITEM_TYPE_DONE: ((TextHolder) holder).collapse();
+                break;
+        }
     }
 
     @Override
     public int getItemCount() {
-        return reviews==null?0:reviews.size();
+        return reviews==null?1:reviews.size()+1;
     }
 
-    @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position, List payloads) {
-        super.onBindViewHolder(holder, position, payloads);
+    public void clearStatus() {
+        loading=done=false;
+        notifyItemChanged(getItemCount()-1);
     }
 
     public class ReviewHolder extends RecyclerView.ViewHolder{
@@ -73,7 +106,18 @@ public class ReviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
         public void bindToView(Review review){
             tvContent.setText(review.getContent());
-            tvAuthor.setText(review.getAuthor());
+            tvAuthor.setText(String.format(tvAuthor.getContext().getString(R.string.review_author_name),review.getAuthor()));
         }
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if(position==getItemCount()-1 && loading)
+            return ITEM_TYPE_LOADING;
+        if(position==getItemCount()-1 && getItemCount()==1)
+            return ITEM_TYPE_EMPTY;
+        if(position == getItemCount()-1)
+            return ITEM_TYPE_DONE;
+        return ITEM_TYPE_DATA;
     }
 }
