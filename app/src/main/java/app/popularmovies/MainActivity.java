@@ -45,16 +45,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Thum
     @BindView(R.id.rv_movies)
     RecyclerView movieRecyclerView;
     MovieAdapter movieAdapter;
-    @BindView(R.id.pb_loading)
-    ProgressBar progressBar;
-    @BindView(R.id.tv_error)
-    TextView errorText;
-    @BindView(R.id.tv_empty)
-    TextView emptyText;
-
-
-    //The spinner which shows movie sort criteria
-    private Spinner spinner;
 
     //state variables
     private int currentMovieListType;
@@ -68,7 +58,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Thum
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             //keep track of the current movie list
             currentMovieListType = position;
-            Log.d(TAG, "CP is: "+recyclerViewScrollListener.getCurrentPage());
             switch (position) {
                 case 0:
                     fetchMovies(Utils.END_POINT_POPULAR);
@@ -121,8 +110,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Thum
         recyclerViewScrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                Log.d(TAG, "CP is: "+recyclerViewScrollListener.getCurrentPage());
-                Log.d(TAG, "CP in CB is: "+page);
                 // Load next page of movies
                 loadMovieData(page, currentMovieListType);
             }
@@ -187,6 +174,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Thum
         }
         else /*do a network fetch*/{
             //when doing a network fetch, reset scroll listener
+            final int currentMovieListingType = currentMovieListType;
             recyclerViewScrollListener.resetState();
             movieRecyclerView.scrollToPosition(0);
             Retrofit retrofit = new Retrofit.Builder().
@@ -198,14 +186,16 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Thum
             movies.enqueue(new Callback<MovieList>() {
                 @Override
                 public void onResponse(Call<MovieList> call, Response<MovieList> response) {
-                    //TODO: we will only add the movies if the current movieList type is the same as the one when we
+                    //DONE: we will only add the movies if the current movieList type is the same as the one when we
                     //made the request. It might be possible that the user navigated to a different movie type
                     //while the network request was in progress. This will cause the data to be mixed up between
                     //different movie types.
-                    movieAdapter.setMovies(response.body().getMovieList());
-                    movieAdapter.setLoading(false);
-                    movieAdapter.notifyDataSetChanged();
-                    recyclerViewScrollListener.enable();
+                    if(currentMovieListingType == currentMovieListType){
+                        movieAdapter.setMovies(response.body().getMovieList());
+                        movieAdapter.setLoading(false);
+                        movieAdapter.notifyDataSetChanged();
+                        recyclerViewScrollListener.enable();
+                    }
                 }
                 @Override
                 public void onFailure(Call<MovieList> call, Throwable t) {
@@ -220,6 +210,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Thum
     private void fetchMovies(String endPoint, String page) {
         //if configuration change ocurred or app was sent to background, we will try to
         //retrieve movie data that was restored from savedInstanceState, else we will do a network request
+        final int currentMovieListingType = currentMovieListType;
         movieRecyclerView.post(new Runnable() {
             @Override
             public void run() {
@@ -235,12 +226,13 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Thum
             movies.enqueue(new Callback<MovieList>() {
                 @Override
                 public void onResponse(Call<MovieList> call, Response<MovieList> response) {
-                    int itemCount = movieAdapter.getItemCount();
-                    movieAdapter.getMovies().addAll(itemCount-1,response.body().getMovieList());
-                    movieAdapter.notifyItemRangeInserted(itemCount-1,response.body().getMovieList().size());
-                    movieAdapter.setLoading(false);
-                    movieAdapter.notifyItemChanged(movieAdapter.getItemCount()-1);
-
+                    if(currentMovieListingType == currentMovieListType) {
+                        int itemCount = movieAdapter.getItemCount();
+                        movieAdapter.getMovies().addAll(itemCount - 1, response.body().getMovieList());
+                        movieAdapter.notifyItemRangeInserted(itemCount - 1, response.body().getMovieList().size());
+                        movieAdapter.setLoading(false);
+                        movieAdapter.notifyItemChanged(movieAdapter.getItemCount() - 1);
+                    }
                 }
                 @Override
                 public void onFailure(Call<MovieList> call, Throwable t) {
@@ -288,7 +280,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Thum
     @Override
     public void onThumbClicked(Movie movie) {
         Intent intent = new Intent(MainActivity.this, DetailActivity.class);
-        intent.putExtra("movie", movie);
+        intent.putExtra(getString(R.string.key_movie), movie);
         startActivity(intent);
     }
 
@@ -331,12 +323,5 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Thum
 
     @Override
     public void onLoaderReset(Loader<ArrayList<Movie>> loader) {
-    }
-
-    private void showEmpty() {
-        movieRecyclerView.setVisibility(View.INVISIBLE);
-        emptyText.setVisibility(View.VISIBLE);
-        progressBar.setVisibility(View.INVISIBLE);
-        errorText.setVisibility(View.INVISIBLE);
     }
 }

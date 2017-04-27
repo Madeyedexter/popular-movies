@@ -15,28 +15,4 @@
         android:visibility="visible"
         android:padding="2dp"/>
 
-    <TextView
-        android:id="@+id/tv_error"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/error_loading"
-        android:layout_gravity="center"
-        android:visibility="invisible"/>
-
-    <ProgressBar
-        android:layout_width="42dp"
-        android:layout_height="42dp"
-        android:layout_gravity="center"
-        android:visibility="invisible"
-        android:id="@+id/pb_loading"
-        />
-
-    <TextView
-        android:id="@+id/tv_empty"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/no_favorite_movie"
-        android:layout_gravity="center"
-        android:visibility="invisible"/>
-
 </FrameLayout>
